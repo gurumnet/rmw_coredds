@@ -2,6 +2,11 @@
 Changelog for package rmw_gurumdds_cpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.0 (2024-07-24)
+------------------
+* Use gurumdds-3.1
+* Contributors: hyeonwoo
+
 1.4.0 (2023-03-08)
 ------------------
 * Add maintainer
