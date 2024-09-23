@@ -71,7 +71,6 @@ struct rmw_context_impl_s
   dds_Publisher * publisher;
   dds_Subscriber * subscriber;
 
-  bool localhost_only;
   bool service_mapping_basic;
 
   /* Participant reference count */
@@ -91,7 +90,7 @@ struct rmw_context_impl_s
   // Initializes the participant, if it wasn't done already.
   // node_count is increased
   rmw_ret_t
-  initialize_node(const char * node_name, const char * node_namespace, const bool localhost_only);
+  initialize_node(const char * node_name, const char * node_namespace);
 
   // Destroys the participant, when node_count reaches 0.
   rmw_ret_t
@@ -99,10 +98,7 @@ struct rmw_context_impl_s
 
   // Initialize the DomainParticipant associated with the context.
   rmw_ret_t
-  initialize_participant(
-    const char * node_name,
-    const char * node_namespace,
-    const bool localhost_only);
+  initialize_participant(const char * node_name, const char * node_namespace);
 
   // Finalize the DomainParticipant associated with the context.
   rmw_ret_t

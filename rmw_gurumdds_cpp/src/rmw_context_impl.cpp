@@ -216,8 +216,7 @@ rmw_context_impl_s::rmw_context_impl_s(rmw_context_t* const base)
   domain_id(base->actual_domain_id),
   participant(nullptr),
   publisher(nullptr),
-  subscriber(nullptr),
-  localhost_only(base->options.localhost_only == RMW_LOCALHOST_ONLY_ENABLED)
+  subscriber(nullptr)
 {
   /* destructor relies on these being initialized properly */
   common_ctx.thread_is_running.store(false);
@@ -234,22 +233,9 @@ rmw_context_impl_s::~rmw_context_impl_s()
 }
 
 rmw_ret_t
-rmw_context_impl_s::initialize_node(
-  const char * node_name,
-  const char * node_namespace,
-  const bool localhost_only)
+rmw_context_impl_t::initialize_node(const char * node_name, const char * node_namespace)
 {
   if (this->node_count != 0u) {
-    if ((this->base->options.localhost_only == RMW_LOCALHOST_ONLY_ENABLED) != localhost_only)
-    {
-      RCUTILS_LOG_ERROR_NAMED(
-        RMW_GURUMDDS_ID,
-        "localhost_only option not matched, "
-        "ctx.localhost_only=%d, node.localhost_only=%d",
-        this->localhost_only, localhost_only);
-      return RMW_RET_ERROR;
-    }
-
     this->node_count += 1;
 
     RCUTILS_LOG_DEBUG_NAMED(
@@ -258,7 +244,7 @@ rmw_context_impl_s::initialize_node(
     return RMW_RET_OK;
   }
 
-  rmw_ret_t ret = this->initialize_participant(node_name, node_namespace, localhost_only);
+  rmw_ret_t ret = this->initialize_participant(node_name, node_namespace);
   if (ret != RMW_RET_OK) {
     RMW_SET_ERROR_MSG("failed to initialize DomainParticipant");
     return ret;
@@ -294,8 +280,7 @@ rmw_context_impl_s::finalize_node()
 rmw_ret_t
 rmw_context_impl_s::initialize_participant(
   const char * node_name,
-  const char * node_namespace,
-  const bool localhost_only)
+  const char * node_namespace)
 {
   dds_PublisherQos publisher_qos;
   dds_SubscriberQos subscriber_qos;
@@ -372,7 +357,8 @@ rmw_context_impl_s::initialize_participant(
   static_discovery_id += node_name;
 
   /* Create DomainParticipant */
-  if (localhost_only) {
+  if (RMW_AUTOMATIC_DISCOVERY_RANGE_LOCALHOST == this->base->options.discovery_options.automatic_discovery_range) {
+    // TODO: localhost only
     dds_StringProperty props[] = {
       {const_cast<char *>("rtps.interface.ip"),
         const_cast<void *>(static_cast<const void *>("127.0.0.1"))},

@@ -40,7 +40,6 @@ rmw_init_options_init(rmw_init_options_t * init_options, rcutils_allocator_t all
   init_options->implementation_identifier = RMW_GURUMDDS_ID;
   init_options->domain_id = RMW_DEFAULT_DOMAIN_ID;
   init_options->security_options = rmw_get_zero_initialized_security_options();
-  init_options->localhost_only = RMW_LOCALHOST_ONLY_DEFAULT;
   init_options->enclave = nullptr;
   init_options->allocator = allocator;
   init_options->impl = nullptr;

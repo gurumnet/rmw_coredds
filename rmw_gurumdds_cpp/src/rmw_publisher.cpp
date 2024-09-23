@@ -472,7 +472,7 @@ rmw_create_publisher(
     topic_name,
     &adapted_qos_policies,
     publisher_options,
-    ctx->localhost_only);
+    RMW_AUTOMATIC_DISCOVERY_RANGE_LOCALHOST == ctx->base->options.discovery_options.automatic_discovery_range);
 
   if (rmw_pub == nullptr) {
     RMW_SET_ERROR_MSG("failed to create RMW publisher");

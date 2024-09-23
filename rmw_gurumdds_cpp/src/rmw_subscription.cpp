@@ -653,7 +653,7 @@ rmw_create_subscription(
     topic_name,
     &adapted_qos_policies,
     subscription_options,
-    ctx->localhost_only);
+    RMW_AUTOMATIC_DISCOVERY_RANGE_LOCALHOST == ctx->base->options.discovery_options.automatic_discovery_range);
 
   if (rmw_sub == nullptr) {
     RMW_SET_ERROR_MSG("failed to create RMW subscription");

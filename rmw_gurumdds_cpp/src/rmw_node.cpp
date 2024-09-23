@@ -93,9 +93,6 @@ rmw_create_node(
     return nullptr;
   }
 
-  bool node_localhost_only =
-    context->options.localhost_only == RMW_LOCALHOST_ONLY_ENABLED;
-
   rmw_context_impl_t * ctx = context->impl;
   std::lock_guard<std::mutex> guard(ctx->initialization_mutex);
 
@@ -104,7 +101,7 @@ rmw_create_node(
     return nullptr;
   }
 
-  ret = ctx->initialize_node(namespace_, name, node_localhost_only);
+  ret = ctx->initialize_node(namespace_, name);
   if (ret != RMW_RET_OK) {
     RCUTILS_LOG_ERROR_NAMED(RMW_GURUMDDS_ID, "failed to initialize node in context");
     return nullptr;
