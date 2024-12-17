@@ -22,6 +22,7 @@
   <build_depend>rosidl_generator_dds_idl</build_depend>
   <build_depend>rosidl_typesupport_introspection_c</build_depend>
   <build_depend>rosidl_typesupport_introspection_cpp</build_depend>
+  <build_depend>tracetools</build_depend>
 
   <build_export_depend>gurumdds-3.2</build_export_depend>
   <build_export_depend>gurumdds_cmake_module</build_export_depend>
@@ -30,6 +31,7 @@
   <build_export_depend>rosidl_runtime_cpp</build_export_depend>
   <build_export_depend>rosidl_typesupport_introspection_c</build_export_depend>
   <build_export_depend>rosidl_typesupport_introspection_cpp</build_export_depend>
+  <build_export_depend>tracetools</build_export_depend>
 
   <exec_depend>rcutils</exec_depend>
   <exec_depend>rmw</exec_depend>

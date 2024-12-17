@@ -28,6 +28,8 @@
 
 #include "rmw_dds_common/qos.hpp"
 
+#include "tracetools/tracetools.h"
+
 #include "rmw_gurumdds_cpp/graph_cache.hpp"
 #include "rmw_gurumdds_cpp/identifier.hpp"
 #include "rmw_gurumdds_cpp/names_and_types_helpers.hpp"
@@ -252,6 +254,11 @@ create_publisher(
   dds_typesupport = nullptr;
 
   scope_exit_rmw_publisher_delete.cancel();
+
+  rmw_gid_t gid;
+  ret = rmw_get_gid_for_publisher(rmw_publisher, &gid);
+  TRACETOOLS_TRACEPOINT(rmw_publisher_init, static_cast<const void *>(rmw_publisher), gid.data);
+
   return rmw_publisher;
 }
 
@@ -363,6 +370,14 @@ rmw_ret_t publish(
   rmw_gurumdds_cpp::ros_guid_to_dds_guid(
       reinterpret_cast<const uint8_t *>(publisher_info->publisher_gid.data),
       reinterpret_cast<uint8_t *>(&sampleinfo_ex.src_guid));
+
+  dds_Time_get_current_time(&sampleinfo_ex.info.source_timestamp);
+  TRACETOOLS_TRACEPOINT(
+    rmw_publish,
+    static_cast<const void *>(publisher),
+    ros_message,
+    rmw_gurumdds_cpp::dds_time_to_i64(sampleinfo_ex.info.source_timestamp)
+  );
 
   dds_ReturnCode_t ret = dds_DataWriter_raw_write_w_sampleinfoex(
       topic_writer, dds_message, size, &sampleinfo_ex);
@@ -731,6 +746,14 @@ rmw_publish_serialized_message(
   rmw_gurumdds_cpp::ros_guid_to_dds_guid(
     reinterpret_cast<const uint8_t *>(publisher_info->publisher_gid.data),
     reinterpret_cast<uint8_t *>(&sampleinfo_ex.src_guid));
+
+  dds_Time_get_current_time(&sampleinfo_ex.info.source_timestamp);
+  TRACETOOLS_TRACEPOINT(
+    rmw_publish,
+    static_cast<const void *>(publisher),
+    serialized_message,
+    rmw_gurumdds_cpp::dds_time_to_i64(sampleinfo_ex.info.source_timestamp)
+  );
 
   dds_ReturnCode_t ret = dds_DataWriter_raw_write_w_sampleinfoex(
     topic_writer,

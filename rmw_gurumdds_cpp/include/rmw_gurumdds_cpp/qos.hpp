@@ -32,6 +32,9 @@ rmw_time_to_dds(const rmw_time_t & time);
 rmw_time_t
 dds_duration_to_rmw(const dds_Duration_t & duration);
 
+int64_t
+dds_time_to_i64(const dds_Time_t & t);
+
 bool
 get_datawriter_qos(dds_Publisher * publisher,
   const rmw_qos_profile_t * qos_profile,

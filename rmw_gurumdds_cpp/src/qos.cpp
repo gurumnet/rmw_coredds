@@ -57,6 +57,12 @@ dds_duration_to_rmw(const dds_Duration_t & duration)
   return time;
 }
 
+int64_t
+dds_time_to_i64(const dds_Time_t & t) {
+  return ((static_cast<int64_t>(t.sec) * static_cast<int64_t>(1000000000ULL))
+          + static_cast<int64_t>(t.nanosec));
+}
+
 template<typename dds_EntityQos>
 bool
 set_entity_qos_from_profile_generic(

@@ -28,6 +28,8 @@
 
 #include "rmw_dds_common/qos.hpp"
 
+#include "tracetools/tracetools.h"
+
 #include "rmw_gurumdds_cpp/event_converter.hpp"
 #include "rmw_gurumdds_cpp/graph_cache.hpp"
 #include "rmw_gurumdds_cpp/identifier.hpp"
@@ -296,6 +298,8 @@ create_subscription(
   dds_typesupport = nullptr;
 
   scope_exit_rmw_subscription_delete.cancel();
+
+  TRACETOOLS_TRACEPOINT(rmw_subscription_init, rmw_subscription, subscriber_info->subscriber_gid.data);
   return rmw_subscription;
 }
 
@@ -423,6 +427,13 @@ take(
       }
     }
   }
+
+  TRACETOOLS_TRACEPOINT(
+    rmw_take,
+    static_cast<const void *>(subscription),
+    static_cast<const void *>(ros_message),
+    (message_info ? message_info->source_timestamp : 0LL),
+    *taken);
 
   return RMW_RET_OK;
 }
@@ -559,6 +570,13 @@ take_serialized(
   dds_DataSeq_delete(data_values);
   dds_SampleInfoSeq_delete(sample_infos);
   dds_UnsignedLongSeq_delete(sample_sizes);
+
+  TRACETOOLS_TRACEPOINT(
+    rmw_take,
+    static_cast<const void *>(subscription),
+    static_cast<const void *>(serialized_message),
+    (message_info ? message_info->source_timestamp : 0LL),
+    *taken);
 
   return RMW_RET_OK;
 }
