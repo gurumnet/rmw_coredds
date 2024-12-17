@@ -50,7 +50,6 @@ inline void MessageSerializer<SERIALIZE, MessageMembersT>::serialize(
         serialize_primitive<uint32_t>(member, input);
         break;
       case rosidl_typesupport_introspection_cpp::ROS_TYPE_DOUBLE:
-      case rosidl_typesupport_introspection_cpp::ROS_TYPE_LONG_DOUBLE:
       case rosidl_typesupport_introspection_cpp::ROS_TYPE_UINT64:
       case rosidl_typesupport_introspection_cpp::ROS_TYPE_INT64:
         serialize_primitive<uint64_t>(member, input);

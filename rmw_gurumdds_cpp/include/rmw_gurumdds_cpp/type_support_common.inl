@@ -141,7 +141,6 @@ parse_struct(const MessageMembersT * members, const char * field_name, bool is_s
           metastring << "f";
           break;
         case rosidl_typesupport_introspection_c__ROS_TYPE_DOUBLE:
-        case rosidl_typesupport_introspection_c__ROS_TYPE_LONG_DOUBLE:
           metastring << "d";
           break;
         case rosidl_typesupport_introspection_c__ROS_TYPE_CHAR:
