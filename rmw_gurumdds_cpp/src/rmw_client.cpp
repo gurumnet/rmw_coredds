@@ -28,6 +28,8 @@
 
 #include "rmw_dds_common/qos.hpp"
 
+#include "tracetools/tracetools.h"
+
 #include "rmw_gurumdds_cpp/event_converter.hpp"
 #include "rmw_gurumdds_cpp/graph_cache.hpp"
 #include "rmw_gurumdds_cpp/identifier.hpp"
@@ -392,6 +394,12 @@ rmw_create_client(
     "Created client with service '%s' on node '%s%s%s'",
     service_name, node->namespace_,
     node->namespace_[strlen(node->namespace_) - 1] == '/' ? "" : "/", node->name);
+
+  if (TRACETOOLS_TRACEPOINT_ENABLED(rmw_client_init)) {
+    TRACETOOLS_DO_TRACEPOINT(
+      rmw_client_init, static_cast<const void *>(rmw_client),
+      client_info->subscriber_gid.data);
+  }
 
   return rmw_client;
 
@@ -820,6 +828,12 @@ rmw_send_request(
       reinterpret_cast<const uint8_t *>(client_info->writer_guid),
       reinterpret_cast<uint8_t *>(&sampleinfo_ex.src_guid));
 
+      TRACETOOLS_TRACEPOINT(
+        rmw_send_request,
+        static_cast<const void *>(client),
+        static_cast<const void *>(ros_request),
+        *sequence_id);
+
     if (dds_DataWriter_raw_write_w_sampleinfoex(
         request_writer, dds_request, size, &sampleinfo_ex) != dds_RETCODE_OK)
     {
@@ -1050,6 +1064,14 @@ rmw_take_response(
   dds_DataSeq_delete(data_values);
   dds_SampleInfoSeq_delete(sample_infos);
   dds_UnsignedLongSeq_delete(sample_sizes);
+
+  TRACETOOLS_TRACEPOINT(
+    rmw_take_response,
+    static_cast<const void *>(client),
+    static_cast<const void *>(ros_response),
+    request_header->request_id.sequence_number,
+    request_header->source_timestamp,
+    *taken);
 
   return RMW_RET_OK;
 }

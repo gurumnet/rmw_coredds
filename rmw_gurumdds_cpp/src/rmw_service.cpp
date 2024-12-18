@@ -25,6 +25,8 @@
 
 #include "rmw_dds_common/qos.hpp"
 
+#include "tracetools/tracetools.h"
+
 #include "rmw_gurumdds_cpp/event_converter.hpp"
 #include "rmw_gurumdds_cpp/graph_cache.hpp"
 #include "rmw_gurumdds_cpp/identifier.hpp"
@@ -803,6 +805,15 @@ rmw_take_request(
   }
 
   *taken = true;
+
+  TRACETOOLS_TRACEPOINT(
+    rmw_take_request,
+    static_cast<const void *>(service),
+    static_cast<const void *>(ros_request),
+    request_header->request_id.writer_guid,
+    request_header->request_id.sequence_number,
+    *taken);
+
   return RMW_RET_OK;
 }
 
@@ -907,6 +918,15 @@ rmw_send_response(
     rmw_gurumdds_cpp::ros_guid_to_dds_guid(
       request_header->writer_guid,
       reinterpret_cast<uint8_t *>(&sampleinfo_ex.src_guid));
+
+    dds_Time_get_current_time(&sampleinfo_ex.info.source_timestamp);
+    TRACETOOLS_TRACEPOINT(
+      rmw_send_response,
+      static_cast<const void *>(service),
+      static_cast<const void *>(ros_response),
+      request_header->writer_guid,
+      request_header->sequence_number,
+      rmw_gurumdds_cpp::dds_time_to_i64(sampleinfo_ex.info.source_timestamp));
 
     if (dds_DataWriter_raw_write_w_sampleinfoex(
         response_writer, dds_response, size, &sampleinfo_ex) != dds_RETCODE_OK)
